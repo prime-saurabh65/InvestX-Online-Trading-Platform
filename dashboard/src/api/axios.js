@@ -15,27 +15,20 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    console.log(
+      "API Request:",
+      config.method?.toUpperCase(),
+      config.baseURL + config.url
+    );
+
+    console.log(
+      "Authorization:",
+      token ? "Bearer token attached" : "NO TOKEN"
+    );
+
     return config;
   },
   (error) => Promise.reject(error)
-);
-
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401 ||
-        error.response?.status === 403) {
-
-      localStorage.removeItem("token");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("userName");
-      localStorage.removeItem("userEmail");
-
-      window.location.href = "http://localhost:3000/login";
-    }
-
-    return Promise.reject(error);
-  }
 );
 
 export default api;

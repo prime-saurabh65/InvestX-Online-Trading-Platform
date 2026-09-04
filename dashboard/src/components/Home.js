@@ -6,17 +6,16 @@ import api from "../api/axios";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const initializeDashboard = async () => {
-      // Check whether login redirected us with a token
       const params = new URLSearchParams(window.location.search);
       const tokenFromUrl = params.get("token");
 
       if (tokenFromUrl) {
         localStorage.setItem("token", tokenFromUrl);
 
-        // Remove token from browser URL
         window.history.replaceState(
           {},
           document.title,
@@ -32,15 +31,25 @@ const Home = () => {
       }
 
       try {
-        await api.get("/funds");
+        const response = await api.get("/funds");
+
+        console.log("Funds API success:", response.data);
 
         setLoading(false);
       } catch (error) {
-        console.error("Authentication failed:", error);
+        console.error("Funds API failed:", error);
 
-        localStorage.removeItem("token");
+        const status = error.response?.status;
+        const data = error.response?.data;
 
-        window.location.href = "http://localhost:3000/login";
+        console.log("Status:", status);
+        console.log("Response:", data);
+
+        setError(
+          `Dashboard API failed. Status: ${status || "unknown"}`
+        );
+
+        setLoading(false);
       }
     };
 
@@ -51,6 +60,15 @@ const Home = () => {
     return (
       <div style={{ padding: "40px" }}>
         Loading InvestX...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ padding: "40px" }}>
+        <h2>{error}</h2>
+        <p>Open Chrome DevTools → Console to see the exact error.</p>
       </div>
     );
   }

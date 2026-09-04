@@ -5,7 +5,9 @@ import com.investx.backend.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,7 +31,8 @@ public class SecurityConfig {
     ) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
+                .cors(cors -> {})
+                .csrf(AbstractHttpConfigurer::disable)
 
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
@@ -39,14 +42,22 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
+                        // CORS preflight request
                         .requestMatchers(
-                                "/api/auth/register",
-                                "/api/auth/login"
+                                HttpMethod.OPTIONS,
+                                "/**"
                         ).permitAll()
 
+                        // Login + Signup public
+                        .requestMatchers(
+                                "/api/auth/**"
+                        ).permitAll()
+
+                        // Everything else protected
                         .anyRequest().authenticated()
                 )
 
+                // IMPORTANT: apna JWT filter yahan rehne dena
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
