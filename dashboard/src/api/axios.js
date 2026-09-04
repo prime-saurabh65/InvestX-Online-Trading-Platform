@@ -7,28 +7,14 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
 
-    console.log(
-      "API Request:",
-      config.method?.toUpperCase(),
-      config.baseURL + config.url
-    );
-
-    console.log(
-      "Authorization:",
-      token ? "Bearer token attached" : "NO TOKEN"
-    );
-
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+  return config;
+});
 
 export default api;
