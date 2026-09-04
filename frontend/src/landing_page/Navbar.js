@@ -14,6 +14,9 @@ function Navbar() {
             <li>
               <Link className="text-sm text-[#666666]" to="/signup">Signup</Link>
             </li>
+            <li>
+              <Link className="text-sm text-[#666666]" to="/login">Login</Link>
+            </li>
 
             <li>
               <Link className="text-sm text-[#666666]" to="/about">About</Link>

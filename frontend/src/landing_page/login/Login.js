@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 
-function Signup() {
+function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
   });
@@ -28,20 +27,20 @@ function Signup() {
     setLoading(true);
 
     try {
-      const response = await api.post("/auth/register", formData);
+      const response = await api.post("/auth/login", formData);
 
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userId", response.data.userId);
       localStorage.setItem("userName", response.data.name);
       localStorage.setItem("userEmail", response.data.email);
 
-      // Open dashboard application
       window.location.href = `http://localhost:3001?token=${encodeURIComponent(
         response.data.token,
       )}`;
     } catch (error) {
       const message =
-        error.response?.data?.error || "Registration failed. Please try again.";
+        error.response?.data?.error ||
+        "Login failed. Please check your credentials.";
 
       setError(message);
     } finally {
@@ -57,25 +56,9 @@ function Signup() {
         padding: "30px",
       }}
     >
-      <h2>Create your InvestX account</h2>
+      <h2>Login to InvestX</h2>
 
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "15px" }}>
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            style={{
-              width: "100%",
-              padding: "10px",
-              marginTop: "5px",
-            }}
-          />
-        </div>
-
         <div style={{ marginBottom: "15px" }}>
           <label>Email</label>
           <input
@@ -100,7 +83,6 @@ function Signup() {
             value={formData.password}
             onChange={handleChange}
             required
-            minLength={6}
             style={{
               width: "100%",
               padding: "10px",
@@ -120,11 +102,11 @@ function Signup() {
             cursor: loading ? "not-allowed" : "pointer",
           }}
         >
-          {loading ? "Creating account..." : "Sign Up"}
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>
   );
 }
 
-export default Signup;
+export default Login;
